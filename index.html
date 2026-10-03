@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grace Chapel - Church Platform App</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Mobile App Frame Container */
+        .app-container {
+            width: 100%;
+            max-width: 414px;
+            height: 100vh;
+            max-height: 896px;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        @media (min-width: 415px) {
+            .app-container {
+                height: 850px;
+                border-radius: 40px;
+                border: 8px solid #121212;
+            }
+        }
+
+        /* Top Header */
+        .app-header {
+            padding: 16px 20px 10px 20px;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-bottom: 1px solid #eee;
+            z-index: 10;
+        }
+
+        .header-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: #111;
+        }
+
+        .top-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .top-tab {
+            background: #f1f3f4;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .top-tab.active {
+            background: #121212;
+            color: #ffffff;
+        }
+
+        /* Main Content Feed Area */
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            background: #fafafa;
+        }
+
+        /* Video / Photo Feed & Post Cards */
+        .video-feed-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding-bottom: 20px;
+        }
+
+        .video-card {
+            width: 100%;
+            height: 380px;
+            background: #111;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .video-bg-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1f2937, #111827, #374151);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.2);
+            font-size: 48px;
+            font-weight: 900;
+        }
+
+        .video-overlay-info {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .video-details {
+            flex: 1;
+            padding-right: 15px;
+        }
+
+        .video-author {
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 6px;
+            color: #fff;
+        }
+
+        .video-caption {
+            font-size: 13px;
+            color: #ddd;
+            line-height: 1.4;
+        }
+
+        .video-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .action-icon-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        .action-icon-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .action-count {
+            font-size: 10px;
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .post-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 14px;
+            border: 1px solid #eaeaea;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .post-author {
+            font-weight: 700;
+            font-size: 14px;
+            color: #111;
+            margin-bottom: 6px;
+        }
+
+        .post-text {
+            font-size: 14px;
+            color: #444;
+            line-height: 1.5;
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            height: 70px;
+            background: #ffffff;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #777;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .nav-item.active {
+            color: #00796b;
+        }
+
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+        }
+
+        /* Modals Overlay */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 100;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            width: 100%;
+            max-height: 85vh;
+            border-top-left-radius: 24px;
+            border-top-right-radius: 24px;
+            padding: 24px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            animation: slideUp 0.3s ease-out;
+            overflow-y: auto;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .interactive-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .action-btn {
+            background: #121212;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .auth-toggle-container {
+            display: flex;
+            background: #f1f3f4;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 4px;
+        }
+
+        .auth-toggle-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            color: #555;
+            transition: all 0.2s;
+        }
+
+        .auth-toggle-btn.active {
+            background: #ffffff;
+            color: #111;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <!-- Top App Header -->
+        <header class="app-header">
+            <div class="header-top-row">
+                <div class="app-title">Grace Chapel</div>
+                <div style="display: flex; gap: 6px; align-items: center;">
+                    <button onclick="openPostModal()" style="background: #00796b; color: #ffffff; border: none; padding: 6px 14px; border-radius: 14px; font-size: 12px; font-weight: 700; cursor: pointer;">+ Post</button>
+                    <button onclick="openAuthModal()" style="background: #e0f2f1; color: #00796b; border: none; padding: 6px 12px; border-radius: 14px; font-size: 12px; font-weight: 600; cursor: pointer;">Account</button>
+                    <button onclick="openHubModal()" style="background: #f1f3f4; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;" title="More Features">⋮</button>
+                </div>
+            </div>
+            <div class="top-tabs">
+                <button class="top-tab active" onclick="switchTopTab(this, 'feed')">HOME</button>
+                <button class="top-tab" onclick="switchTopTab(this, 'bible')">Bible Reader</button>
+                <button class="top-tab" onclick="switchTopTab(this, 'notes')">My Notes</button>
+            </div>
+        </header>
+
+        <!-- Dynamic Main Content View Area -->
+        <main class="content-area" id="mainContentArea">
+            <!-- Feed injected via JS -->
+        </main>
+
+        <!-- Bottom Navigation Bar -->
+        <nav class="bottom-nav">
+            <button class="nav-item active" onclick="switchBottomNav(this, 'Home')">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                Home
+            </button>
+            <button class="nav-item" onclick="switchBottomNav(this, 'Live')">
+                <svg viewBox="0 0 24 24"><path d="M21 3H3c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h5v2h8v-2h5c1.1 0 1.9-.9 1.9-2L23 5c0-1.1-.9-2-2-2zm0 14H3V5h18v12z"/></svg>
+                Live
+            </button>
+            
+            <button class="nav-item" onclick="openPostModal()" style="color: #00796b;">
+                <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                Upload
+            </button>
+
+            <button class="nav-item" onclick="switchBottomNav(this, 'Connections')">
+                <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                Connect
+            </button>
+            <button class="nav-item" onclick="switchBottomNav(this, 'Profile')">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+                Profile
+            </button>
+        </nav>
+
+        
+
+        <!-- Modal for Login & Signup -->
+        <div class="modal-overlay" id="authModal">
+            <div class="modal-content">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong id="authModalTitle">Welcome to Grace Chapel</strong>
+                    <button onclick="closeAuthModal()" style="background: none; border: none; font-size: 18px; cursor: pointer;">✕</button>
+                </div>
+
+                <div class="auth-toggle-container">
+                    <button class="auth-toggle-btn active" id="tabLoginBtn" onclick="switchAuthMode('login')">Log In</button>
+                    <button class="auth-toggle-btn" id="tabSignupBtn" onclick="switchAuthMode('signup')">Sign Up</button>
+                </div>
+
+                <div id="signupFields" style="display: none; flex-direction: column; gap: 10px;">
+                    <label style="font-size: 12px; font-weight: 600;">Full Name</label>
+                    <input type="text" id="signupName" class="interactive-input" placeholder="e.g. Emmanuel Dekuku">
+                </div>
+
+                <label style="font-size: 12px; font-weight: 600;">Email or Phone</label>
+                <input type="text" id="authEmail" class="interactive-input" placeholder="user@example.com">
+
+                <label style="font-size: 12px; font-weight: 600;">Password</label>
+                <input type="password" id="authPassword" class="interactive-input" placeholder="••••••••">
+
+                <button class="action-btn" id="authSubmitBtn" onclick="handleAuthSubmit()" style="margin-top: 6px;">Log In</button>
+            </div>
+        </div>
+
+        <!-- Modal for Uploading Photos / Videos & Writing Posts -->
+        <div class="modal-overlay" id="postModal">
+            <div class="modal-content">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong>Create Post & Upload from Gallery</strong>
+                    <button onclick="closePostModal()" style="background: none; border: none; font-size: 18px; cursor: pointer;">✕</button>
+                </div>
+                
+                <input type="text" class="interactive-input" id="newVideoAuthor" placeholder="Your Name or Ministry (@handle)">
+
+                <!-- Gallery File Input Picker -->
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                    <label style="font-size: 12px; font-weight: 600; color: #555;">Choose Photo from Gallery (Optional)</label>
+                    <input type="file" id="mediaFileInput" accept="image/*" onchange="previewSelectedImage(event)" style="font-size: 13px; padding: 6px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
+                </div>
+
+                <!-- Image Preview Box -->
+                <div id="imagePreviewContainer" style="display: none; width: 100%; height: 140px; border-radius: 8px; overflow: hidden; background: #000; position: relative;">
+                    <img id="uploadPreviewImg" src="" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;">
+                    <button onclick="clearSelectedImage()" style="position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; cursor: pointer;">✕</button>
+                </div>
+
+                <textarea class="interactive-input" id="newVideoText" rows="3" placeholder="What's on your mind? Share a testimony or thoughts..."></textarea>
+                
+                <button class="action-btn" onclick="submitMediaPost()">Publish Post</button>
+            </div>
+        </div>
+
+
+        <!-- Embedded In-Phone White Donation Modal -->
+<div id="donationModal" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 99999; justify-content: center; align-items: center; box-sizing: border-box; padding: 10px;">
+    <div style="background: #ffffff; color: #18181b; width: 100%; max-width: 320px; border-radius: 14px; padding: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); box-sizing: border-box; font-family: sans-serif; border: 1px solid #e4e4e7;">
+        
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div>
+                <strong style="font-size: 13px; color: #18181b; display: block;">Send Payment</strong>
+                <span style="font-size: 10px; color: #71717a;">Support the ministry securely.</span>
+            </div>
+            <button onclick="closeDonationModal()" style="background: none; border: none; font-size: 18px; cursor: pointer; color: #71717a; padding: 0;">&times;</button>
+        </div>
+
+        <!-- Select Network Dropdown Box -->
+        <label style="font-size: 10px; font-weight: 500; display: block; margin-bottom: 2px; color: #71717a;">Select Network / Method</label>
+        
+        <div style="position: relative; margin-bottom: 8px;">
+            <!-- Main Dropdown Toggle Bar -->
+            <div id="dropdownToggleBtn" onclick="toggleNetworkDropdown()" style="display: flex; justify-content: space-between; align-items: center; background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 6px; padding: 6px 10px; cursor: pointer;">
+                <div id="selectedNetworkDisplay" style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; color: #18181b;">
+                    <span style="background: #ffcc00; color: #000; font-weight: bold; font-size: 8px; padding: 2px 4px; border-radius: 3px;">MTN</span> MTN MoMo
+                </div>
+                <span id="dropdownArrow" style="font-size: 10px; color: #71717a;">▼</span>
+            </div>
+
+            <!-- Expandable Options List -->
+            <div id="networkDropdownList" style="display: none; position: absolute; top: 105%; left: 0; width: 100%; background: #ffffff; border: 1px solid #e4e4e7; border-radius: 6px; overflow: hidden; z-index: 100000; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <div onclick="selectNetworkOption('MTN', 'MTN MoMo', '#ffcc00', '#000')" style="display: flex; align-items: center; gap: 6px; padding: 6px 10px; cursor: pointer; border-bottom: 1px solid #f4f4f5; font-size: 11px; color: #18181b;">
+                    <span style="background: #ffcc00; color: #000; font-weight: bold; font-size: 8px; padding: 2px 4px; border-radius: 3px;">MTN</span> MTN MoMo
+                </div>
+                <div onclick="selectNetworkOption('AT', 'AT (AirtelTigo)', '#00a3e0', '#fff')" style="display: flex; align-items: center; gap: 6px; padding: 6px 10px; cursor: pointer; border-bottom: 1px solid #f4f4f5; font-size: 11px; color: #18181b;">
+                    <span style="background: #00a3e0; color: #fff; font-weight: bold; font-size: 8px; padding: 2px 4px; border-radius: 3px;">AT</span> AT (AirtelTigo)
+                </div>
+                <div onclick="selectNetworkOption('TELECEL', 'Telecel', '#e60000', '#fff')" style="display: flex; align-items: center; gap: 6px; padding: 6px 10px; cursor: pointer; border-bottom: 1px solid #f4f4f5; font-size: 11px; color: #18181b;">
+                    <span style="background: #e60000; color: #fff; font-weight: bold; font-size: 8px; padding: 2px 4px; border-radius: 3px;">t</span> Telecel
+                </div>
+                <div onclick="selectNetworkOption('BANK', 'Bank Account', '#4f46e5', '#fff')" style="display: flex; align-items: center; gap: 6px; padding: 6px 10px; cursor: pointer; font-size: 11px; color: #18181b;">
+                    <span style="background: #4f46e5; color: #fff; font-weight: bold; font-size: 8px; padding: 2px 4px; border-radius: 3px;">BANK</span> Bank Account
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden input storing selected network -->
+        <input type="hidden" id="donorNetworkInput" value="MTN">
+
+        <!-- DYNAMIC INPUT PORTAL: MoMo -->
+        <div id="momoPortalInputSection" style="margin-bottom: 8px;">
+            <label id="phoneFieldLabel" style="font-size: 10px; font-weight: 500; display: block; margin-bottom: 2px; color: #71717a;">Phone Number</label>
+            <div style="background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 6px; padding: 5px 8px;">
+                <input type="text" id="donorPhoneInput" placeholder="Enter Phone Number" style="width: 100%; background: transparent; border: none; outline: none; color: #18181b; font-size: 11px;">
+            </div>
+        </div>
+
+        <!-- Bank Portal Section (Hidden by default) -->
+        <div id="bankPortalInputSection" style="display: none; margin-bottom: 8px;">
+            <label style="font-size: 10px; font-weight: 500; display: block; margin-bottom: 2px; color: #71717a;">Select Bank</label>
+            <div style="background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 6px; padding: 5px 8px; margin-bottom: 6px;">
+                <select id="bankNameInput" style="width: 100%; background: transparent; border: none; outline: none; color: #18181b; font-size: 11px;">
+                    <option value="GTB">Guaranty Trust Bank (GTBank)</option>
+                    <option value="GCB">GCB Bank Limited</option>
+                    <option value="ECO">Ecobank Ghana</option>
+                    <option value="STB">Stanbic Bank</option>
+                    <option value="ZEN">Zenith Bank</option>
+                </select>
+            </div>
+
+            <label style="font-size: 10px; font-weight: 500; display: block; margin-bottom: 2px; color: #71717a;">Bank Account Number</label>
+            <div style="background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 6px; padding: 5px 8px;">
+                <input type="text" id="bankAccountNumberInput" placeholder="Enter 10-digit account number" style="width: 100%; background: transparent; border: none; outline: none; color: #18181b; font-size: 11px;">
+            </div>
+        </div>
+
+        <!-- Enter Amount to Pay -->
+        <label style="font-size: 10px; font-weight: 500; display: block; margin-bottom: 2px; color: #71717a;">Enter Amount to Pay</label>
+        <div style="background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 6px; padding: 5px 8px; display: flex; align-items: center; margin-bottom: 8px;">
+            <span style="color: #71717a; font-size: 11px; font-weight: bold; margin-right: 4px;">GHS</span>
+            <input type="number" id="donationAmountInput" placeholder="0.00" oninput="calculateDeduction()" style="width: 100%; background: transparent; border: none; outline: none; color: #18181b; font-size: 11px;">
+        </div>
+
+        <!-- Enter Reference -->
+        <label style="font-size: 10px; font-weight: 500; display: block; margin-bottom: 2px; color: #71717a;">Enter Reference</label>
+        <div style="background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 6px; padding: 5px 8px; display: flex; align-items: center; margin-bottom: 8px;">
+            <input type="text" id="donationMessageInput" placeholder="Enter reference or message" style="width: 100%; background: transparent; border: none; outline: none; color: #18181b; font-size: 11px;">
+        </div>
+
+        <!-- Fee Breakdown Box -->
+        <div style="background: #f4f4f5; border: 1px solid #e4e4e7; border-radius: 6px; padding: 6px 8px; font-size: 10px; color: #3f3f46; margin-bottom: 8px;">
+            <div>Platform Fee (2%): <strong>GHS <span id="feeDisplay">0.00</span></strong></div>
+            <div>Net Amount to Host (98%): <strong>GHS <span id="netDisplay">0.00</span></strong></div>
+        </div>
+
+        <!-- Submit Button -->
+        <button onclick="sendDonation()" style="width: 100%; background: #ff4757; color: white; border: none; border-radius: 6px; padding: 8px; font-size: 12px; font-weight: bold; cursor: pointer;">
+            Send Donation Now
+        </button>
+
+    </div>
+</div>
+
+       
+
+        <!-- 3-Dots Hub Modal -->
+        <div class="modal-overlay" id="hubModal">
+            <div class="modal-content">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong>🔥 Church Hub & Features</strong>
+                    <button onclick="closeHubModal()" style="background: none; border: none; font-size: 18px; cursor: pointer;">✕</button>
+                </div>
+                <div style="font-size: 13px; color: #666;">Explore advanced features and tools for your spiritual growth.</div>
+                
+                <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                    <button class="action-btn" style="background: #f1f3f4; color: #111; text-align: left; display: flex; justify-content: space-between;" onclick="openHubFeature('prayer')">
+                        <span>🙏 Daily Prayer Wall</span> <span>→</span>
+                    </button>
+                    <button class="action-btn" style="background: #f1f3f4; color: #111; text-align: left; display: flex; justify-content: space-between;" onclick="openHubFeature('cell')">
+                        <span>🏡 Find Home Fellowship Cell</span> <span>→</span>
+                    </button>
+                    <button class="action-btn" style="background: #f1f3f4; color: #111; text-align: left; display: flex; justify-content: space-between;" onclick="openHubFeature('ai')">
+                        <span>🤖 AI Scripture Assistant</span> <span>→</span>
+                    </button>
+                    <button class="action-btn" style="background: #f1f3f4; color: #111; text-align: left; display: flex; justify-content: space-between;" onclick="openHubFeature('audio')">
+                        <span>🎧 Audio Bible & Devotions</span> <span>→</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secondary Sub-Modal for Hub Features -->
+        <div class="modal-overlay" id="hubFeatureModal">
+            <div class="modal-content" style="max-height: 90vh;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong id="hubFeatureTitle">Feature Title</strong>
+                    <button onclick="closeHubFeatureModal()" style="background: none; border: none; font-size: 18px; cursor: pointer;">✕</button>
+                </div>
+                <div id="hubFeatureBody" style="display: flex; flex-direction: column; gap: 12px; margin-top: 4px;">
+                    <!-- Dynamically populated feature content -->
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Default User State & Session Management
+        let currentUser = JSON.parse(localStorage.getItem('churchCurrentUser')) || {
+            name: "Emmanuel Dekuku",
+            handle: "@emmanueldekuku2004",
+            email: "emmanuel@example.com",
+            initials: "ED",
+            streamsAttended: 14,
+            totalDonated: 100.00
+        };
+
+        let authMode = 'login'; // 'login' or 'signup'
+
+        let videoPosts = JSON.parse(localStorage.getItem('churchVideoPosts')) || [
+            { id: 1, author: "@GraceChapelGlobal", caption: "Welcome to today's powerful Sunday morning worship session! 🙏✨", image: null, likes: 1240, comments: 84 },
+            { id: 2, author: "@PastorEmmanuel", caption: "\"Trust in the LORD with all your heart and lean not on your own understanding...\" 📖🔥", image: null, likes: 3510, comments: 215 },
+            { id: 3, author: "@ProphetElvis", caption: "Your breakthrough is happening this week. Declare it in the comments! 👇", image: null, likes: 8920, comments: 642 }
+        ];
+
+        let prayerRequests = JSON.parse(localStorage.getItem('churchPrayerRequests')) || [
+            { id: 1, author: "@AmaSerwaa", text: "Please pray for my upcoming semester exams and God's grace." },
+            { id: 2, author: "@DeaconKofi", text: "Praying for total healing and restoration for my family." }
+        ];
+
+        let selectedImageBase64 = null;
+
+        window.onload = function() {
+            renderVideoFeed();
+            updateAuthUI();
+        };
+
+        function updateAuthUI() {
+            localStorage.setItem('churchCurrentUser', JSON.stringify(currentUser));
+            const authorInput = document.getElementById('newVideoAuthor');
+            if(authorInput) {
+                authorInput.value = currentUser.handle;
+            }
+        }
+
+        // Auth Modal Controls
+        function openAuthModal() {
+            document.getElementById('authModal').style.display = 'flex';
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+        }
+
+        // 3-Dots Hub Modal Controls
+        function openHubModal() {
+            document.getElementById('hubModal').style.display = 'flex';
+        }
+
+        function closeHubModal() {
+            document.getElementById('hubModal').style.display = 'none';
+        }
+
+        function closeHubFeatureModal() {
+            document.getElementById('hubFeatureModal').style.display = 'none';
+        }
+
+        // Open Fully Functional Hub Feature Screens
+        function openHubFeature(featureType) {
+            closeHubModal();
+            const modal = document.getElementById('hubFeatureModal');
+            const title = document.getElementById('hubFeatureTitle');
+            const body = document.getElementById('hubFeatureBody');
+            modal.style.display = 'flex';
+
+            if (featureType === 'prayer') {
+                title.innerText = '🙏 Daily Prayer Wall';
+                renderPrayerWallUI(body);
+            } else if (featureType === 'cell') {
+                title.innerText = '🏡 Find Home Fellowship Cell';
+                body.innerHTML = `
+                    <div style="font-size: 13px; color: #666;">Locate a cell fellowship center near you in your neighborhood.</div>
+                    <input type="text" id="cellSearchInput" class="interactive-input" placeholder="Search by area (e.g. Adum, Kumasi)..." oninput="filterCells(this.value)">
+                    <div id="cellResultsList" style="display: flex; flex-direction: column; gap: 8px; max-height: 300px; overflow-y: auto;">
+                        <div class="post-card" style="margin-bottom: 0;">
+                            <div class="post-author">Grace Chapel Central Cell</div>
+                            <div class="post-text">📍 Location: Adum Main Street<br>🕒 Time: Wednesdays @ 6:30 PM<br>📞 Leader: Elder Kwame (024-123-4567)</div>
+                        </div>
+                        <div class="post-card" style="margin-bottom: 0;">
+                            <div class="post-author">Campus Believers Cell (KNUST)</div>
+                            <div class="post-text">📍 Location: Republic Hall Annex<br>🕒 Time: Thursdays @ 7:00 PM<br>📞 Leader: Sister Abena (055-987-6543)</div>
+                        </div>
+                        <div class="post-card" style="margin-bottom: 0;">
+                            <div class="post-author">North-East Fellowship Unit</div>
+                            <div class="post-text">📍 Location: Ayigya Station Area<br>🕒 Time: Tuesdays @ 6:00 PM<br>📞 Leader: Deacon Kofi (020-555-8888)</div>
+                        </div>
+                    </div>
+                `;
+            } else if (featureType === 'ai') {
+                title.innerText = '🤖 AI Scripture Assistant';
+                body.innerHTML = `
+                    <div style="font-size: 13px; color: #666;">Ask any question about faith, life, or scripture and get instant guidance.</div>
+                    <div id="aiChatStream" style="background: #f9f9f9; border: 1px solid #eaeaea; border-radius: 12px; padding: 12px; height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; font-size: 13px;">
+                        <div style="background: #e0f2f1; padding: 8px 12px; border-radius: 8px; align-self: flex-start; max-width: 85%;">Hello ${currentUser.name}! How can I help you study the Word today? Feel free to ask about any verse or topic.</div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="aiQueryInput" class="interactive-input" placeholder="Ask about peace, strength, faith..." style="margin-bottom: 0;">
+                        <button class="action-btn" onclick="sendAiQuery()">Ask</button>
+                    </div>
+                `;
+            } else if (featureType === 'audio') {
+                title.innerText = '🎧 Audio Bible & Devotions';
+                body.innerHTML = `
+                    <div style="font-size: 13px; color: #666;">Listen to daily audio devotionals and chapters on the go.</div>
+                    <div class="post-card" style="background: #121212; color: white; border: none; text-align: center; padding: 20px;">
+                        <div style="font-size: 36px; margin-bottom: 8px;">🎙️</div>
+                        <div style="font-weight: 700; font-size: 16px; margin-bottom: 4px;">Daily Morning Devotional</div>
+                        <div style="font-size: 12px; color: #aaa; margin-bottom: 14px;">Host: Pastor Emmanuel Dekuku • Season 4, Ep 12</div>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+                            <button onclick="alert('Rewound 10 seconds')" style="background: none; border: none; color: white; font-size: 18px; cursor: pointer;">⏪</button>
+                            <button id="audioPlayPauseBtn" onclick="toggleAudioPlayback()" style="background: #00796b; color: white; border: none; width: 45px; height: 45px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;">▶</button>
+                            <button onclick="alert('Skipped 10 seconds')" style="background: none; border: none; color: white; font-size: 18px; cursor: pointer;">⏩</button>
+                        </div>
+                    </div>
+                    <div style="font-size: 12px; font-weight: 600; color: #444; margin-top: 4px;">More Audio Series</div>
+                    <div class="post-card" style="margin-bottom: 0; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div class="post-author" style="margin-bottom: 2px;">Walking in Divine Favor</div>
+                            <div style="font-size: 11px; color: #666;">15 mins • Psalm 5:12</div>
+                        </div>
+                        <button class="action-btn" style="padding: 6px 12px; font-size: 12px;" onclick="alert('Playing Walking in Divine Favor')">Play</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Prayer Wall Helpers
+        function renderPrayerWallUI(container) {
+            let listHtml = '';
+            prayerRequests.forEach(req => {
+                listHtml += `
+                    <div class="post-card" style="margin-bottom: 0;">
+                        <div class="post-author">${req.author}</div>
+                        <div class="post-text">${req.text}</div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = `
+                <div style="font-size: 13px; color: #666;">Share your prayer requests with the community so brethren can stand with you in faith.</div>
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <textarea id="newPrayerInput" class="interactive-input" rows="2" placeholder="Type your prayer request here..."></textarea>
+                    <button class="action-btn" onclick="submitPrayerRequest()" style="background: #00796b;">Post Prayer Request</button>
+                </div>
+                <div style="font-weight: 600; font-size: 13px; margin-top: 4px;">Community Prayer Requests</div>
+                <div id="prayerWallList" style="display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto;">
+                    ${listHtml}
+                </div>
+            `;
+        }
+
+        function submitPrayerRequest() {
+            const input = document.getElementById('newPrayerInput');
+            if (input.value.trim() !== '') {
+                prayerRequests.unshift({
+                    id: prayerRequests.length + 1,
+                    author: currentUser.handle,
+                    text: input.value.trim()
+                });
+                localStorage.setItem('churchPrayerRequests', JSON.stringify(prayerRequests));
+                input.value = '';
+                renderPrayerWallUI(document.getElementById('hubFeatureBody'));
+                alert('Prayer request posted to the wall successfully! 🙏');
+            } else {
+                alert('Please type a prayer request.');
+            }
+        }
+
+        // AI Assistant Helper
+        function sendAiQuery() {
+            const input = document.getElementById('aiQueryInput');
+            const stream = document.getElementById('aiChatStream');
+            const query = input.value.trim();
+
+            if (query !== '') {
+                stream.innerHTML += `<div style="background: #ffffff; padding: 8px 12px; border-radius: 8px; align-self: flex-end; border: 1px solid #eaeaea; max-width: 85%;"><strong>You:</strong> ${query}</div>`;
+                input.value = '';
+                stream.scrollTop = stream.scrollHeight;
+
+                setTimeout(() => {
+                    let reply = "The Lord is your shepherd; you shall not lack. Keep your faith anchored in Him!";
+                    const qLower = query.toLowerCase();
+                    if (qLower.includes('peace') || qLower.includes('anxiety')) {
+                        reply = "Philippians 4:6-7 reminds us: 'Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God.'";
+                    } else if (qLower.includes('strength') || qLower.includes('weak')) {
+                        reply = "Isaiah 40:31 assures us that those who hope in the Lord will renew their strength. They will soar on wings like eagles!";
+                    } else if (qLower.includes('love')) {
+                        reply = "1 Corinthians 13:4-7 teaches us that love is patient, love is kind. Walk in love today!";
+                    }
+
+                    stream.innerHTML += `<div style="background: #e0f2f1; padding: 8px 12px; border-radius: 8px; align-self: flex-start; max-width: 85%;"><strong>Assistant:</strong> ${reply}</div>`;
+                    stream.scrollTop = stream.scrollHeight;
+                }, 600);
+            }
+        }
+
+        // Audio Player Simulation
+        let isAudioPlaying = false;
+        function toggleAudioPlayback() {
+            const btn = document.getElementById('audioPlayPauseBtn');
+            isAudioPlaying = !isAudioPlaying;
+            if (isAudioPlaying) {
+                btn.innerText = '⏸';
+                alert('Audio devotional is now playing 🎧');
+            } else {
+                btn.innerText = '▶';
+                alert('Audio paused');
+            }
+        }
+
+        function switchAuthMode(mode) {
+            authMode = mode;
+            const signupFields = document.getElementById('signupFields');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            const loginBtn = document.getElementById('tabLoginBtn');
+            const signupBtn = document.getElementById('tabSignupBtn');
+
+            if (mode === 'signup') {
+                signupFields.style.display = 'flex';
+                submitBtn.innerText = 'Create Account & Log In';
+                signupBtn.classList.add('active');
+                loginBtn.classList.remove('active');
+            } else {
+                signupFields.style.display = 'none';
+                submitBtn.innerText = 'Log In';
+                loginBtn.classList.add('active');
+                signupBtn.classList.remove('active');
+            }
+        }
+
+        function handleAuthSubmit() {
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value.trim();
+
+            if (!email || !password) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+
+            if (authMode === 'signup') {
+                const name = document.getElementById('signupName').value.trim() || 'Church Member';
+                const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+                const handle = '@' + name.toLowerCase().replace(/\s+/g, '');
+
+                currentUser = {
+                    name: name,
+                    handle: handle,
+                    email: email,
+                    initials: initials,
+                    streamsAttended: 0,
+                    totalDonated: 0.00
+                };
+                alert('Account created and logged in successfully! 🎉');
+            } else {
+                const name = email.split('@')[0];
+                const capitalizedName = name.charAt(0).toUpperCase() + name.slice(1);
+                currentUser = {
+                    name: capitalizedName,
+                    handle: '@' + name.toLowerCase(),
+                    email: email,
+                    initials: capitalizedName.substring(0, 2).toUpperCase(),
+                    streamsAttended: 5,
+                    totalDonated: 50.00
+                };
+                alert('Logged in successfully! Welcome back.');
+            }
+
+            updateAuthUI();
+            closeAuthModal();
+            
+            const profileTabBtn = document.querySelector('.nav-item.active');
+            if (profileTabBtn && profileTabBtn.innerText.includes('Profile')) {
+                switchBottomNav(profileTabBtn, 'Profile');
+            }
+        }
+
+        function logoutUser() {
+            currentUser = {
+                name: "Guest User",
+                handle: "@guest",
+                email: "",
+                initials: "GU",
+                streamsAttended: 0,
+                totalDonated: 0.00
+            };
+            updateAuthUI();
+            alert('Logged out securely.');
+            openAuthModal();
+            switchBottomNav(document.querySelector('.nav-item'), 'Home');
+        }
+
+        // Gallery Image Preview Handler
+        function previewSelectedImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedImageBase64 = e.target.result;
+                    const previewContainer = document.getElementById('imagePreviewContainer');
+                    const previewImg = document.getElementById('uploadPreviewImg');
+                    
+                    previewImg.src = selectedImageBase64;
+                    previewContainer.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function clearSelectedImage() {
+            selectedImageBase64 = null;
+            document.getElementById('mediaFileInput').value = '';
+            document.getElementById('imagePreviewContainer').style.display = 'none';
+        }
+
+        // Render Feed with Gallery Photos & Custom Captions
+        function renderVideoFeed() {
+            const contentArea = document.getElementById('mainContentArea');
+            let html = '<div class="video-feed-container">';
+            
+            videoPosts.forEach((video) => {
+                let mediaContentHTML = '';
+                if (video.image) {
+                    mediaContentHTML = `<img src="${video.image}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;" alt="Post Image">`;
+                } else {
+                    mediaContentHTML = `<div class="video-bg-placeholder">▶ POST #${video.id}</div>`;
+                }
+
+                html += `
+                    <div class="video-card">
+                        ${mediaContentHTML}
+                        <div class="video-overlay-info">
+                            <div class="video-details">
+                                <div class="video-author">${video.author}</div>
+                                <div class="video-caption">${video.caption}</div>
+                            </div>
+                            <div class="video-actions">
+                                <button class="action-icon-btn" onclick="likeVideo(${video.id})">
+                                    <span>❤</span>
+                                    <span class="action-count">${video.likes}</span>
+                                </button>
+                                <button class="action-icon-btn" onclick="alert('Opened comments for post by ${video.author}')">
+                                    <span>💬</span>
+                                    <span class="action-count">${video.comments}</span>
+                                </button>
+                                <button class="action-icon-btn" onclick="alert('Post link copied to clipboard!')">
+                                    <span>🔗</span>
+                                    <span class="action-count">Share</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            contentArea.innerHTML = html;
+        }
+
+        function likeVideo(id) {
+            const vid = videoPosts.find(v => v.id === id);
+            if(vid) {
+                vid.likes += 1;
+                localStorage.setItem('churchVideoPosts', JSON.stringify(videoPosts));
+                renderVideoFeed();
+            }
+        }
+
+        // Switch Top Header Tabs
+        function switchTopTab(button, tabType) {
+            document.querySelectorAll('.top-tab').forEach(tab => tab.classList.remove('active'));
+            button.classList.add('active');
+
+            const contentArea = document.getElementById('mainContentArea');
+
+            if (tabType === 'bible') {
+                contentArea.innerHTML = `
+                    <div class="post-card">
+                        <div class="post-author">📖 Scripture Reader & Random Generator</div>
+                        <div class="post-text" style="margin-bottom: 10px;">Type a book/verse OR click the button below to get a random encouraging scripture:</div>
+                        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+                            <input type="text" id="bibleBook" class="interactive-input" value="John 3:16" style="margin-bottom: 0;">
+                            <button class="action-btn" onclick="loadScripture()">Search</button>
+                        </div>
+                        <button class="action-btn" style="background: #00796b; width: 100%; margin-top: 4px;" onclick="loadRandomScripture()">🎲 Get Random Scripture</button>
+                    </div>
+                    <div class="post-card" id="scriptureDisplay">
+                        <div class="post-author">John 3:16</div>
+                        <div class="post-text">"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life."</div>
+                    </div>
+                `;
+            } else if (tabType === 'notes') {
+                const savedNote = localStorage.getItem('userSermonNote') || '';
+                contentArea.innerHTML = `
+                    <div class="post-card">
+                        <div class="post-author">📝 Personal Sermon Notes</div>
+                        <textarea class="interactive-input" id="sermonNoteInput" rows="6" placeholder="Type your notes or takeaways from the service here...">${savedNote}</textarea>
+                        <button class="action-btn" onclick="saveNote()" style="margin-top: 10px;">Save Note</button>
+                    </div>
+                `;
+            } else {
+                renderVideoFeed();
+            }
+        }
+
+        // Switch Bottom Navigation Tabs
+        function switchBottomNav(button, navName) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            button.classList.add('active');
+
+            const contentArea = document.getElementById('mainContentArea');
+
+            if (navName === 'Home') {
+                renderVideoFeed();
+            } else if (navName === 'Live') {
+                loadLiveStreamView();
+            } else if (navName === 'Connections') {
+                contentArea.innerHTML = `
+                    <div class="post-card">
+                        <div class="post-author">👥 Your Church Connections</div>
+                        <div class="post-text" style="margin-top: 8px;">• Deacon Kofi (Online)</div>
+                        <div class="post-text" style="margin-top: 8px;">• Ama Serwaa (Active 2h ago)</div>
+                        <div class="post-text" style="margin-top: 8px;">• Pastor Emmanuel (Active now)</div>
+                    </div>
+                `;
+            } else if (navName === 'Profile') {
+                contentArea.innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 15px; padding-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <button style="background: #e0f2f1; color: #00796b; border: none; padding: 6px 12px; border-radius: 16px; font-size: 12px; font-weight: 600;">Account Active 🟢</button>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="width: 70px; height: 70px; background: #121212; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 18px;">${currentUser.initials}</div>
+                            <div>
+                                <div style="font-weight: 700; font-size: 18px; color: #111;">${currentUser.name}</div>
+                                <div style="font-size: 13px; color: #666; margin-top: 2px;">${currentUser.handle}</div>
+                            </div>
+                        </div>
+                        <div style="background: #f9f9f9; padding: 12px; border-radius: 8px; border: 1px solid #eaeaea;">
+                            <div style="font-weight: 600; font-size: 13px; margin-bottom: 4px;">Platform Statistics</div>
+                            <div style="font-size: 12px; color: #555;">Total Live Streams Attended: <strong>${currentUser.streamsAttended}</strong></div>
+                            <div style="font-size: 12px; color: #555; margin-top: 4px;">Total Donations Made: <strong>GHS ${currentUser.totalDonated.toFixed(2)}</strong></div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="action-btn" style="flex: 1;" onclick="openAuthModal()">Switch / Edit Account</button>
+                            <button class="action-btn" style="flex: 1; background: #f1f3f4; color: #111;" onclick="logoutUser()">Log Out</button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Load Live Stream Layout
+        function loadLiveStreamView() {
+            const contentArea = document.getElementById('mainContentArea');
+            contentArea.innerHTML = `
+                <div style="width: 100%; height: 160px; background: #e0f2f1; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid #b2dfdb; margin-bottom: 12px; position: relative;">
+                    <div style="font-weight: bold; color: #00796b; font-size: 15px;">Live Stream Broadcast</div>
+                    <div style="font-size: 12px; color: #555; margin-top: 4px;">@PastorElvisAgyemang</div>
+                    <div style="position: absolute; bottom: 8px; right: 10px; background: #ff3b30; color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold;">LIVE</div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <span style="font-size: 12px; color: #666; font-weight: 600;">Viewer Count: <strong>29,410</strong></span>
+                    <button onclick="openDonationModal()" style="background: #ff3b30; color: white; border: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                        <span>♥</span> Donate / Super Chat
+                    </button>
+                </div>
+
+                <div style="background: #fdfdfd; border: 1px solid #eaeaea; border-radius: 12px; padding: 12px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 8px; margin-bottom: 10px;">
+                        <span style="font-weight: 600; font-size: 13px; color: #333;">Live chat stream</span>
+                        <span style="font-size: 11px; color: #666;">Top messages</span>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; max-height: 180px; overflow-y: auto; font-size: 12px; margin-bottom: 12px;" id="chatStream">
+                        <div><strong style="color: #0066cc;">@AsantewaBernice</strong> I CONNECT MY ACADEMIC AND MY RESULTS ONTO THE HOLY ALTAR 🙌</div>
+                        <div style="background: #fff3cd; padding: 6px 10px; border-radius: 6px; border-left: 3px solid #ffc107;"><strong style="color: #856404;">⭐ @KwameMensah donated 100.00:</strong> Pastor, God bless you for this powerful word!</div>
+                        <div><strong style="color: #0066cc;">@matildaquashie</strong> I connect myself to this fire altar for God blessing me... 🙏</div>
+                    </div>
+
+                    <div style="display: flex; gap: 8px; align-items: center; border-top: 1px solid #eee; padding-top: 8px;">
+                        <input type="text" id="chatInputBox" placeholder="Chat..." style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 20px; font-size: 12px; outline: none;">
+                        <button onclick="sendLiveComment()" style="background: #121212; color: white; border: none; padding: 7px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: pointer;">Send</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function sendLiveComment() {
+            const input = document.getElementById('chatInputBox');
+            const stream = document.getElementById('chatStream');
+            if(input.value.trim() !== '') {
+                stream.innerHTML += `<div><strong style="color: #0066cc;">${currentUser.handle} (You)</strong> ${input.value}</div>`;
+                input.value = '';
+                stream.scrollTop = stream.scrollHeight;
+            }
+        }
+
+        // Donation Modal Controls & 2% Fee Deduction Logic
+        function openDonationModal() {
+            document.getElementById('donationModal').style.display = 'flex';
+            document.getElementById('donationAmountInput').value = '';
+            document.getElementById('feeDisplay').innerText = '0.00';
+            document.getElementById('netDisplay').innerText = '0.00';
+        }
+
+        function closeDonationModal() {
+            document.getElementById('donationModal').style.display = 'none';
+        }
+
+        function calculateDeduction() {
+            const val = parseFloat(document.getElementById('donationAmountInput').value) || 0;
+            const fee = val * 0.02;
+            const net = val - fee;
+            
+            document.getElementById('feeDisplay').innerText = fee.toFixed(2);
+            document.getElementById('netDisplay').innerText = net.toFixed(2);
+        }
+
+        async function sendDonation() {
+    const val = parseFloat(document.getElementById('donationAmountInput').value) || 0;
+    const msg = document.getElementById('donationMessageInput').value;
+    const network = document.getElementById('donorNetworkInput').value;
+    const phoneNumber = document.getElementById('donorPhoneInput').value;
+
+    if (val <= 0 || !phoneNumber) {
+        alert('Please enter a valid amount and your phone number.');
+        return;
+    }
+
+    try {
+        // Call your backend payment initialization route
+        const response = await fetch('http://localhost:5000/api/payments/initialize', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+            amount: Math.round(val * 100),
+            network: network,
+            phoneNumber: phoneNumber,
+            message: msg,
+            subaccount: "ACCT_powurnu46rvz2m1" // <--- Add this line here
+        })
+});
+
+        const data = await response.json();
+        
+        
+    } catch (err) {
+        console.error('Payment Error:', err);
+        alert('An error occurred while initiating payment.');
+    }
+}
+        
+
+        // Dynamic Bible Reader API Integration
+        async function loadScripture() {
+            const selectedBook = document.getElementById('bibleBook').value;
+            const display = document.getElementById('scriptureDisplay');
+            
+            display.innerHTML = `<div class="post-author">${selectedBook}</div><div class="post-text">Loading scripture...</div>`;
+
+            try {
+                const response = await fetch(`https://bible-api.com/${encodeURIComponent(selectedBook)}?translation=kjv`);
+                const data = await response.json();
+
+                if (data && data.text) {
+                    display.innerHTML = `
+                        <div class="post-author">${data.reference} (${data.translation_name || 'KJV'})</div>
+                        <div class="post-text" style="line-height: 1.6;">${data.text}</div>
+                    `;
+                } else {
+                    display.innerHTML = `
+                        <div class="post-author">${selectedBook}</div>
+                        <div class="post-text" style="color: #ff3b30;">Could not load passage. Please check format (e.g., "John 3:16").</div>
+                    `;
+                }
+            } catch (error) {
+                display.innerHTML = `
+                    <div class="post-author">${selectedBook}</div>
+                    <div class="post-text" style="color: #ff3b30;">Network error connecting to Bible service.</div>
+                `;
+            }
+        }
+
+        async function loadRandomScripture() {
+            const randomVerses = [
+                "Proverbs 3:5-6", "Philippians 4:13", "Psalm 23:1", "Romans 8:28", 
+                "Isaiah 40:31", "Joshua 1:9", "Jeremiah 29:11", "Psalm 46:1", "Matthew 6:33"
+            ];
+            const chosenVerse = randomVerses[Math.floor(Math.random() * randomVerses.length)];
+            document.getElementById('bibleBook').value = chosenVerse;
+            loadScripture();
+        }
+
+        function saveNote() {
+            const noteText = document.getElementById('sermonNoteInput').value;
+            localStorage.setItem('userSermonNote', noteText);
+            alert('Sermon note successfully saved to your device! 📝');
+        }
+
+        function openPostModal() {
+            document.getElementById('postModal').style.display = 'flex';
+            document.getElementById('newVideoAuthor').value = currentUser.handle;
+        }
+
+        function closePostModal() {
+            document.getElementById('postModal').style.display = 'none';
+        }
+
+        // Submit Post with Gallery Image and Custom Text
+        function submitMediaPost() {
+            const author = document.getElementById('newVideoAuthor').value.trim();
+            const text = document.getElementById('newVideoText').value.trim();
+
+            if (!text && !selectedImageBase64) {
+                alert('Please write something or select an image from your gallery.');
+                return;
+            }
+
+            videoPosts.unshift({
+                id: videoPosts.length + 1,
+                author: author || currentUser.handle,
+                caption: text || 'Shared a photo update ✨',
+                image: selectedImageBase64 || null,
+                likes: 1,
+                comments: 0
+            });
+
+            localStorage.setItem('churchVideoPosts', JSON.stringify(videoPosts));
+            
+            // Reset fields
+            clearSelectedImage();
+            document.getElementById('newVideoText').value = '';
+            
+            closePostModal();
+            renderVideoFeed();
+            alert('Your post has been published successfully! 🚀');
+        }
+    </script>
+    <script>
+    async function loadChurchProfile() {
+        try {
+            const response = await fetch('/api/profile');
+            const data = await response.json();
+            
+            const nameElement = document.getElementById('church-name');
+            if (nameElement && data.name) {
+                nameElement.innerText = data.name;
+            }
+            
+            document.title = `${data.name} - Church Platform App`;
+        } catch (err) {
+            console.error("Failed to load church profile:", err);
+        }
+    }
+
+    window.onload = loadChurchProfile;
+</script>
+</body>
+<script>
+    // Toggle the network options list open/closed
+    function toggleNetworkDropdown() {
+        const list = document.getElementById('networkDropdownList');
+        const arrow = document.getElementById('dropdownArrow');
+        if (!list) return;
+        
+        if (list.style.display === 'none' || list.style.display === '') {
+            list.style.display = 'block';
+            if (arrow) arrow.innerText = '▲';
+        } else {
+            list.style.display = 'none';
+            if (arrow) arrow.innerText = '▼';
+        }
+    }
+
+    // Select a specific network or bank and switch input sections
+    function selectNetworkOption(value, labelText, badgeBg, badgeColor) {
+        document.getElementById('donorNetworkInput').value = value;
+        
+        document.getElementById('selectedNetworkDisplay').innerHTML = `
+            <span style="background: ${badgeBg}; color: ${badgeColor}; font-weight: bold; font-size: 8px; padding: 2px 4px; border-radius: 3px;">${value === 'TELECEL' ? 't' : value}</span> ${labelText}
+        `;
+
+        document.getElementById('networkDropdownList').style.display = 'none';
+        document.getElementById('dropdownArrow').innerText = '▼';
+
+        const momoSection = document.getElementById('momoPortalInputSection');
+        const bankSection = document.getElementById('bankPortalInputSection');
+        const phoneLabel = document.getElementById('phoneFieldLabel');
+
+        if (value === 'BANK') {
+            momoSection.style.display = 'none';
+            bankSection.style.display = 'block';
+        } else {
+            bankSection.style.display = 'none';
+            momoSection.style.display = 'block';
+            phoneLabel.innerText = `${labelText} Number`;
+        }
+    }
+
+    // Modal open/close handlers
+    function openDonationModal() {
+        const modal = document.getElementById('donationModal');
+        if (modal) modal.style.display = 'flex';
+    }
+
+    function closeDonationModal() {
+        const modal = document.getElementById('donationModal');
+        if (modal) modal.style.display = 'none';
+    }
+
+    // Fee calculation logic
+    function calculateDeduction() {
+        const amount = parseFloat(document.getElementById('donationAmountInput').value) || 0;
+        const fee = amount * 0.02; // 2% fee
+        const net = amount - fee;
+        
+        document.getElementById('feeDisplay').innerText = fee.toFixed(2);
+        document.getElementById('netDisplay').innerText = net.toFixed(2);
+    }
+</script>
+</html>
+
+
+
